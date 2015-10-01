@@ -3,10 +3,49 @@
 <head>
     <title>Master/Detail form demo | Wingspan Forms</title>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <style>
+        .infinite-list-item {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .infinite-list-item:last-child span {
+            border-bottom: 0;
+        }
+
+        .infinite-list-item h4 {
+            margin: 1px;
+        }
+
+        .infinite-list-item p {
+            margin: 1px;
+        }
+
+        .chatdemo .chat {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+
+            width: 600px;
+            height: 400px;
+            float: left;
+            width: 60%;
+        }
+
+        .chatdemo .chat button {
+            margin: 10px 0;
+        }
+
+        .chatdemo .diagnostics {
+            font-size: .8em;
+            float: left;
+            margin: 0;
+            padding: 0 10px;
+        }
+    </style>
 </head>
 <body>
 <div id="root"></div>
 <script src="http://fb.me/react-with-addons-0.13.3.js"></script>
+<script src="/vendor/react-infinite-2-SNAPSHOT.js"></script>
 <script src='/static/bundle.js'></script>
 </body>
 

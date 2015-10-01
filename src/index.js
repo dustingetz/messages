@@ -1,5 +1,3 @@
-import React from 'react';
-import App from './App';
+import MessagesApp from './App';
 
-
-React.render(<App />, document.getElementById('root'));
+window.messages = React.render(<MessagesApp />, document.getElementById('root'));

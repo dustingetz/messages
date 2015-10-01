@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "lodash": "^3.10.1",
-    "react": "^0.13.3"
+    "react": "^0.13.3",
+    "react-cursor": "1.2.0"
   }
 }
