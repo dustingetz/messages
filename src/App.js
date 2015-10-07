@@ -1,5 +1,6 @@
 var Cursor = require('react-cursor').Cursor;
 import _ from 'lodash';
+import moment from 'moment';
 
 var ChatRow = React.createClass({
 
@@ -69,46 +70,95 @@ var ContactList = React.createClass({
 
 var randInt = (i) => {return 1;};
 
+var Compose = React.createClass({
+
+  render () {
+    return (
+        <textarea onKeyDown={this.onKeyDown} onChange={this.onChange} value={this.props.cursor.value} />
+    );
+  },
+
+  onChange(e) {
+    this.props.cursor.set(e.target.value);
+  },
+
+  onKeyDown (e) {
+    if (e.keyCode == 13) {
+      console.log('enter pressed');
+      e.preventDefault();
+      this.props.sendMessage(this.props.cursor.value, this.props.cursor.id);
+    }
+  }
+});
+
 var MessageDisplay = React.createClass({
   render() {
-    var rows = this.props.currentUserObj.messages.map(row);
+    var currentUserCursor = this.props.currentUserCursor;
+    var rows = currentUserCursor.refine('messages').value.map(row);
 
     var spinner = <div />;
 
+    var sendMessage = (text) => {
+      currentUserCursor.refine('messages').push([buildMessage(text)]);
+      currentUserCursor.refine('composeText').set('');
+
+      this.props.sendMessage(text, currentUserCursor.refine('id').value);
+    };
+
     return (
-        <Infinite ref="infinite"
-                  className="chat"
-                  maxChildren={15}
-                  flipped={true}
-                  containerHeight={400}
-                  infiniteLoadBeginBottomOffset={50}
-                  onInfiniteLoad={_.noop}
-                  loadingSpinnerDelegate={spinner}
-                  isInfiniteLoading={this.props.isInfiniteLoading}
-                  diagnosticsDomElId="diagnostics"
-            >
-          {rows}
-        </Infinite>
+        <div>
+          <Infinite ref="infinite"
+                    className="chat"
+                    maxChildren={15}
+                    flipped={true}
+                    containerHeight={400}
+                    infiniteLoadBeginBottomOffset={50}
+                    onInfiniteLoad={_.noop}
+                    loadingSpinnerDelegate={spinner}
+                    isInfiniteLoading={this.props.isInfiniteLoading}
+                    diagnosticsDomElId="diagnostics"
+              >
+            {rows}
+          </Infinite>
+          <Compose sendMessage={sendMessage} cursor={currentUserCursor.refine('composeText')}/>
+        </div>
+
     )
   }
 });
+
+function buildMessage(text, myself, imageHref) {
+  return {
+    myself: !!myself,
+    time: moment().format(),
+    text: text,
+    imageHref: imageHref
+  };
+}
+
+function sendMessage (text, uid) {
+  console.log('Sending message \'' + text + '\'' + ' to uid: '+ uid);
+  // todo message back
+}
 
 var MessagesApp = React.createClass({
   getInitialState: function () {
     return {
       isInfiniteLoading: false,
-      currentUser: 1,
+      currentUserId: 1,
       contacts: [
         {
           id: 1,
           name: "Joe",
           presence: "Online",
+          composeText: '',
           messages: []
         },
         {
           id: 2,
           name: "Bob",
           presence: "Online",
+          composeText: '',
           messages: [
             {
               myself: true,
@@ -137,11 +187,18 @@ var MessagesApp = React.createClass({
   render() {
     var cursor = this.cursor = Cursor.build(this);
 
-    var currentUserObj = _.find(this.state.contacts, {id: this.state.currentUser});
+    var userRecordIndex = _.findIndex(this.state.contacts, {id: this.state.currentUserId});
+    var currentUserCursor = cursor.refine('contacts', userRecordIndex);
+
+
+
     return (
         <div className="chatdemo">
-          <MessageDisplay isInfiniteLoading={this.state.isInfiniteLoading} currentUserObj={currentUserObj}/>
-          <ContactList contactsCursor={cursor.refine('contacts')} setCurrentUser={cursor.refine('currentUser').set}/>
+          <MessageDisplay
+              isInfiniteLoading={this.state.isInfiniteLoading}
+              sendMessage={sendMessage}
+              currentUserCursor={currentUserCursor} />
+          <ContactList contactsCursor={cursor.refine('contacts')} setCurrentUser={cursor.refine('currentUserId').set}/>
           <div style={{clear: 'both'}}/>
           <pre className="diagnostics">
             { JSON.stringify(this.state, undefined, 2) }
