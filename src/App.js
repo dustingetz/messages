@@ -34,11 +34,18 @@ function row (record, i) {
 
 var ContactListElement = React.createClass({
   render() {
-    var contact = this.props.contactCursor.value
+    var contact = this.props.contactCursor.value;
+
+    var updateUserFn = () => {
+      this.props.setCurrentUser(contact.id);
+    };
+
     return (
         <li>
-          <div><h5>{contact.name}</h5></div>
-          <div>{contact.presence}</div>
+          <a onClick={updateUserFn}>
+            <h5>{contact.name}</h5>
+            <span>{contact.presence}</span>
+          </a>
         </li>
     )
   }
@@ -46,9 +53,9 @@ var ContactListElement = React.createClass({
 
 var ContactList = React.createClass({
   render: function () {
-    var contactList = this.props.cursor;
+    var contactList = this.props.contactsCursor;
     var list = contactList.value.map((a, i) => {
-      return <ContactListElement contactCursor={contactList.refine(i)}/>;
+      return <ContactListElement contactCursor={contactList.refine(i)} setCurrentUser={this.props.setCurrentUser}/>;
     });
 
     return (
@@ -61,6 +68,30 @@ var ContactList = React.createClass({
 });
 
 var randInt = (i) => {return 1;};
+
+var MessageDisplay = React.createClass({
+  render() {
+    var rows = this.props.currentUserObj.messages.map(row);
+
+    var spinner = <div />;
+
+    return (
+        <Infinite ref="infinite"
+                  className="chat"
+                  maxChildren={15}
+                  flipped={true}
+                  containerHeight={400}
+                  infiniteLoadBeginBottomOffset={50}
+                  onInfiniteLoad={_.noop}
+                  loadingSpinnerDelegate={spinner}
+                  isInfiniteLoading={this.props.isInfiniteLoading}
+                  diagnosticsDomElId="diagnostics"
+            >
+          {rows}
+        </Infinite>
+    )
+  }
+});
 
 var MessagesApp = React.createClass({
   getInitialState: function () {
@@ -106,27 +137,15 @@ var MessagesApp = React.createClass({
   render() {
     var cursor = this.cursor = Cursor.build(this);
 
-    var rows = this.state.contacts[this.state.currentUser].messages.map(row);
-
-    var spinner = <div />;
-
+    var currentUserObj = _.find(this.state.contacts, {id: this.state.currentUser});
     return (
         <div className="chatdemo">
-          <Infinite ref="infinite"
-                    className="chat"
-                    maxChildren={15}
-                    flipped={true}
-                    containerHeight={400}
-                    infiniteLoadBeginBottomOffset={50}
-                    onInfiniteLoad={_.noop}
-                    loadingSpinnerDelegate={spinner}
-                    isInfiniteLoading={this.state.isInfiniteLoading}
-                    diagnosticsDomElId="diagnostics"
-              >
-            {rows}
-          </Infinite>
-          <ContactList cursor={cursor.refine('contacts')} />
-          <pre className="diagnostics" id="diagnostics"></pre>
+          <MessageDisplay isInfiniteLoading={this.state.isInfiniteLoading} currentUserObj={currentUserObj}/>
+          <ContactList contactsCursor={cursor.refine('contacts')} setCurrentUser={cursor.refine('currentUser').set}/>
+          <div style={{clear: 'both'}}/>
+          <pre className="diagnostics">
+            { JSON.stringify(this.state, undefined, 2) }
+          </pre>
           <div style={{clear: 'both'}}/>
         </div>
     );
