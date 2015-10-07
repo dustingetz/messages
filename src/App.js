@@ -1,4 +1,3 @@
-var Cursor = require('react-cursor').Cursor;
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -86,7 +85,7 @@ var Compose = React.createClass({
     if (e.keyCode == 13) {
       console.log('enter pressed');
       e.preventDefault();
-      this.props.sendMessage(this.props.cursor.value, this.props.cursor.id);
+      this.props.sendMessage(this.props.cursor.value);
     }
   }
 });
@@ -98,12 +97,7 @@ var MessageDisplay = React.createClass({
 
     var spinner = <div />;
 
-    var sendMessage = (text) => {
-      currentUserCursor.refine('messages').push([buildMessage(text)]);
-      currentUserCursor.refine('composeText').set('');
-
-      this.props.sendMessage(text, currentUserCursor.refine('id').value);
-    };
+    var sendMessage = _.partial(this.props.sendMessage, _, currentUserCursor.value.id);
 
     return (
         <div>
@@ -127,81 +121,23 @@ var MessageDisplay = React.createClass({
   }
 });
 
-function buildMessage(text, myself, imageHref) {
-  return {
-    myself: !!myself,
-    time: moment().format(),
-    text: text,
-    imageHref: imageHref
-  };
-}
-
-function sendMessage (text, uid) {
-  console.log('Sending message \'' + text + '\'' + ' to uid: '+ uid);
-  // todo message back
-}
-
 var MessagesApp = React.createClass({
-  getInitialState: function () {
-    return {
-      isInfiniteLoading: false,
-      currentUserId: 1,
-      contacts: [
-        {
-          id: 1,
-          name: "Joe",
-          presence: "Online",
-          composeText: '',
-          messages: []
-        },
-        {
-          id: 2,
-          name: "Bob",
-          presence: "Online",
-          composeText: '',
-          messages: [
-            {
-              myself: true,
-              time: '5:02pm',
-              text: "bobobbobboo",
-              imageHref: true ? "/stock-smiley-small.jpeg" : null
-            },
-            {
-              myself: true,
-              time: '5:02pm',
-              text: "boasdbfoadsfbosadf",
-              imageHref: true ? "/stock-smiley-small.jpeg" : null
-            },
-            {
-              myself: true,
-              time: '5:02pm',
-              text: "bobadbfodsaf",
-              imageHref: true ? "/stock-smiley-small.jpeg" : null
-            }
-          ]
-        }
-      ]
-    };
-  },
-
   render() {
-    var cursor = this.cursor = Cursor.build(this);
+    var controller = this.props.messagesController;
 
-    var userRecordIndex = _.findIndex(this.state.contacts, {id: this.state.currentUserId});
-    var currentUserCursor = cursor.refine('contacts', userRecordIndex);
-
-
+    //var userRecordIndex = _.findIndex(this.props.cursor.refine('contacts').value, {id: this.props.cursor.refine('currentUserId').value});
+    //var currentUserCursor = this.props.cursor.refine('contacts', userRecordIndex);
 
     return (
         <div className="chatdemo">
           <MessageDisplay
-              isInfiniteLoading={this.state.isInfiniteLoading}
-              sendMessage={sendMessage}
-              currentUserCursor={currentUserCursor} />
-          <ContactList contactsCursor={cursor.refine('contacts')} setCurrentUser={cursor.refine('currentUserId').set}/>
+              isInfiniteLoading={this.props.cursor.refine('isInfiniteLoading').value}
+              sendMessage={controller.sendMessage.bind(controller)}
+              currentUserCursor={controller.getCurrentUserCursor()} />
+          <ContactList contactsCursor={this.props.cursor.refine('contacts')} setCurrentUser={controller.setCurrentUser.bind(controller)}/>
           <div style={{clear: 'both'}}/>
           <pre className="diagnostics">
-            { JSON.stringify(this.state, undefined, 2) }
+            { JSON.stringify(this.props.cursor.value, undefined, 2) }
           </pre>
           <div style={{clear: 'both'}}/>
         </div>

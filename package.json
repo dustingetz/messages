@@ -14,9 +14,9 @@
     "webpack-dev-server": "^1.8.2"
   },
   "dependencies": {
+    "deep-diff": "^0.3.2",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
-    "react": "^0.13.3",
-    "react-cursor": "1.2.0"
+    "react": "^0.13.3"
   }
 }
