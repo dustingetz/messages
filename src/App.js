@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+import './styles.less'
 
 var ChatRow = React.createClass({
 
@@ -139,7 +140,6 @@ var MessagesApp = React.createClass({
           <pre className="diagnostics">
             { JSON.stringify(this.props.cursor.value, undefined, 2) }
           </pre>
-          <div style={{clear: 'both'}}/>
         </div>
     );
   }

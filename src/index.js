@@ -4,7 +4,7 @@ import MessagesController from './MessagesController';
 
 var stateAtom = atom.createAtom({
   isInfiniteLoading: false,
-  currentUserId: 1,
+  currentUserId: 2,
   contacts: [
     {
       id: 1,
@@ -20,7 +20,7 @@ var stateAtom = atom.createAtom({
       composeText: '',
       messages: [
         {
-          myself: true,
+          myself: false,
           time: '5:02pm',
           text: "bobobbobboo",
           imageHref: true ? "/stock-smiley-small.jpeg" : null
@@ -59,6 +59,6 @@ function queueRender (key, ref, prevVal, curVal) {
 }
 
 stateAtom.addWatch('react-renderer', queueRender);
-queueRender('react-renderer', stateAtom, undefined, stateAtom.deref())
+queueRender('react-renderer', stateAtom, undefined, stateAtom.deref());
 
 
