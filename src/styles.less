@@ -1,36 +1,52 @@
-.infinite-list-item {
-  border-bottom: 1px solid #ddd;
-}
+.messages-app {
+  .message-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
 
-.infinite-list-item:last-child span {
-  border-bottom: 0;
-}
+    width: 60%;
+    height: 400px;
+    float: left;
 
-.infinite-list-item h4 {
-  margin: 1px;
-}
+    .message {
+      border-bottom: 1px solid #ddd;
 
-.infinite-list-item p {
-  margin: 1px;
-}
+      &:last-child span {
+        border-bottom: 0;
+      }
 
-.chatdemo .chat {
-  border: 1px solid #ddd;
-  border-radius: 4px;
+      h4 {
+        margin: 1px;
+      }
 
-  width: 600px;
-  height: 400px;
-  float: left;
-  width: 60%;
-}
+      p {
+        margin: 1px;
+      }
+    }
 
-.chatdemo .chat button {
-  margin: 10px 0;
-}
+    button {
+      margin: 10px 0;
+    }
+  }
 
-.chatdemo .diagnostics {
-  font-size: .8em;
-  float: left;
-  margin: 0;
-  padding: 0 10px;
+  .composition-area {
+
+  }
+
+  .contact-list {
+    > ul {
+      list-style: none;
+    }
+
+    .contact {
+
+    }
+  }
+
+  .diagnostics {
+    clear: both;
+    font-size: .8em;
+    float: left;
+    margin: 0;
+    padding: 0;
+  }
 }
