@@ -69,6 +69,7 @@ var Compose = React.createClass({
                 onKeyDown={this.onKeyDown}
                 onChange={this.onChange}
                 value={this.props.cursor.value} />
+            <span>Emoticon | Image</span>
         </div>
     );
   },
@@ -109,7 +110,6 @@ var MessageDisplay = React.createClass({
           <Infinite ref="infinite"
                     className="message-list"
                     maxChildren={15}
-                    flipped={true}
                     containerHeight={400}
                     infiniteLoadBeginBottomOffset={50}
                     onInfiniteLoad={_.noop}

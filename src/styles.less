@@ -1,53 +1,49 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .messages-app {
-  box-sizing:border-box;
+  padding: 10px;
 
   .message-display {
     @message-list-height: 400px;
     @composition-area-height: 40px;
+    @border-styling: 1px solid #ddd;
 
     height: @message-list-height + @composition-area-height;
     width: 60%;
     float: left;
 
+    border: @border-styling;
+    border-radius: 4px;
+
     .message-list {
-      //currently overriden by inline styles in react-infinite
+      //currently overridden by inline styles in react-infinite
       //height: @message-list-height;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border-bottom: @border-styling;
 
       .message {
-        border-bottom: 1px solid #ddd;
+        border-bottom: @border-styling;
 
-        &:last-child span {
+        &:last-child {
+          // react is generating too many divs for this to be applied
           border-bottom: 0;
         }
-
-        h4 {
-          margin: 1px;
-        }
-
-        p {
-          margin: 1px;
-        }
-      }
-
-      button {
-        margin: 10px 0;
       }
     }
 
     .composition-area {
-      @ca-padding: 2px;
-
       height: @composition-area-height;
-      padding: @ca-padding;
+      padding: 5px;
 
       textarea {
-        @ca-border-width: 1px;
-
+        height: 100%;
         width: 80%;
-        border-width: @ca-border-width;
-        height: @composition-area-height - (2 * @ca-padding) - (2 * @ca-border-width);
+        border: 0;
+        outline: none;
+        resize: none;
       }
     }
   }
