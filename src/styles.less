@@ -1,35 +1,55 @@
 .messages-app {
-  .message-list {
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  box-sizing:border-box;
 
+  .message-display {
+    @message-list-height: 400px;
+    @composition-area-height: 40px;
+
+    height: @message-list-height + @composition-area-height;
     width: 60%;
-    height: 400px;
     float: left;
 
-    .message {
-      border-bottom: 1px solid #ddd;
+    .message-list {
+      //currently overriden by inline styles in react-infinite
+      //height: @message-list-height;
+      border: 1px solid #ddd;
+      border-radius: 4px;
 
-      &:last-child span {
-        border-bottom: 0;
+      .message {
+        border-bottom: 1px solid #ddd;
+
+        &:last-child span {
+          border-bottom: 0;
+        }
+
+        h4 {
+          margin: 1px;
+        }
+
+        p {
+          margin: 1px;
+        }
       }
 
-      h4 {
-        margin: 1px;
-      }
-
-      p {
-        margin: 1px;
+      button {
+        margin: 10px 0;
       }
     }
 
-    button {
-      margin: 10px 0;
+    .composition-area {
+      @ca-padding: 2px;
+
+      height: @composition-area-height;
+      padding: @ca-padding;
+
+      textarea {
+        @ca-border-width: 1px;
+
+        width: 80%;
+        border-width: @ca-border-width;
+        height: @composition-area-height - (2 * @ca-padding) - (2 * @ca-border-width);
+      }
     }
-  }
-
-  .composition-area {
-
   }
 
   .contact-list {
@@ -46,7 +66,7 @@
     clear: both;
     font-size: .8em;
     float: left;
-    margin: 0;
+    margin: 5px 0 0 0;
     padding: 0;
   }
 }

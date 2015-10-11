@@ -64,11 +64,12 @@ var randInt = (i) => {return 1;};
 var Compose = React.createClass({
   render () {
     return (
-        <textarea
-            className="composition-area"
-            onKeyDown={this.onKeyDown}
-            onChange={this.onChange}
-            value={this.props.cursor.value} />
+        <div className="composition-area">
+            <textarea
+                onKeyDown={this.onKeyDown}
+                onChange={this.onChange}
+                value={this.props.cursor.value} />
+        </div>
     );
   },
 
@@ -104,7 +105,7 @@ var MessageDisplay = React.createClass({
     var sendMessage = _.partial(this.props.sendMessage, _, currentUserCursor.value.id);
 
     return (
-        <div>
+        <div className="message-display">
           <Infinite ref="infinite"
                     className="message-list"
                     maxChildren={15}
