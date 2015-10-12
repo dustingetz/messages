@@ -23,13 +23,39 @@
       //currently overridden by inline styles in react-infinite
       //height: @message-list-height;
       border-bottom: @border-styling;
+      padding: 10px;
 
       .message {
-        border-bottom: @border-styling;
+        width: 90%;
 
-        &:last-child {
-          // react is generating too many divs for this to be applied
-          border-bottom: 0;
+        .msg-content {
+
+          > * {
+            display: inline-block;
+            padding: 10px;
+            border-radius: 5px;
+          }
+        }
+
+        time {
+          display: inline-block;
+          padding: 2px;
+        }
+      }
+
+      .received-message {
+        .msg-content > * {
+          background-color: #00ee00;
+        }
+      }
+
+      .sent-message {
+        float: right;
+        text-align: right;
+
+        .msg-content > * {
+          background-color: #33acfe;
+          text-align: left;
         }
       }
     }

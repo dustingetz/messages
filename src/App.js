@@ -10,15 +10,16 @@ var Message = React.createClass({
   },
 
   render: function () {
-    var maybeImg = this.props.imageHref
+    var content = this.props.imageHref
         ? <img src={this.props.imageHref} style={{height:'auto'}}/>
-        : null;
+        : <span>{this.props.text}</span>;
+
+    var classNames = "message" + (this.props.myself ? " sent-message" : " received-message");
 
     return (
-        <div className="message">
+        <div className={classNames}>
+          <div className="msg-content">{content}</div>
           <time>{this.props.time}</time>
-          <span>{this.props.text}</span>
-          <div>{maybeImg}</div>
         </div>
     );
   }

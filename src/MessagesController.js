@@ -16,7 +16,7 @@ class MessagesController {
   sendMessage (text, uid) {
     var contactCursor = findContactCursorByUID(uid, this.cursor.refine('contacts'));
 
-    contactCursor.refine('messages').push([buildMessage(text)]);
+    contactCursor.refine('messages').push([buildMessage(text, true)]);
     contactCursor.refine('composeText').set('');
 
     this.writeToService(text, contactCursor.refine('id').value);
@@ -25,7 +25,10 @@ class MessagesController {
 
   writeToService (text, uid) {
     console.log('Sending message \'' + text + '\'' + ' to uid: '+ uid);
-    // todo message back
+    setTimeout(() => {
+      var contactCursor = findContactCursorByUID(uid, this.cursor.refine('contacts'));
+      contactCursor.refine('messages').push([buildMessage('Replying with some text.')]);
+    }, 2000);
   }
 }
 
