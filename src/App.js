@@ -10,15 +10,13 @@ var Message = React.createClass({
   },
 
   render: function () {
-    var content = this.props.imageHref
-        ? <img src={this.props.imageHref} style={{height:'auto'}}/>
-        : <span>{this.props.text}</span>;
-
     var classNames = "message" + (this.props.myself ? " sent-message" : " received-message");
 
     return (
         <div className={classNames}>
-          <div className="msg-content">{content}</div>
+          <div className="msg-content">
+            <span>{this.props.text}</span>
+          </div>
           <time>{this.props.time}</time>
         </div>
     );
@@ -70,7 +68,6 @@ var Compose = React.createClass({
                 onKeyDown={this.onKeyDown}
                 onChange={this.onChange}
                 value={this.props.cursor.value} />
-            <span>Emoticon | Image</span>
         </div>
     );
   },
@@ -97,8 +94,7 @@ var MessageDisplay = React.createClass({
                 myself={record.myself}
                 text={record.text}
                 key={i}
-                time={record.time}
-                imageHref={record.imageHref}/>
+                time={record.time} />
         );
     });
 
@@ -130,9 +126,6 @@ var MessageDisplay = React.createClass({
 var MessagesApp = React.createClass({
   render() {
     var controller = this.props.messagesController;
-
-    //var userRecordIndex = _.findIndex(this.props.cursor.refine('contacts').value, {id: this.props.cursor.refine('currentUserId').value});
-    //var currentUserCursor = this.props.cursor.refine('contacts', userRecordIndex);
 
     return (
         <div className="messages-app">

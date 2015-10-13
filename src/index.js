@@ -22,20 +22,17 @@ var stateAtom = atom.createAtom({
         {
           myself: false,
           time: '5:02pm',
-          text: "bobobbobboo",
-          imageHref: null
+          text: "bobobbobboo"
         },
         {
           myself: true,
           time: '5:02pm',
-          text: "boasdbfoadsfbosadf",
-          imageHref: "/stock-smiley-small.jpeg"
+          text: "boasdbfoadsfbosadf"
         },
         {
           myself: true,
           time: '5:02pm',
-          text: "bobadbfodsaf",
-          imageHref:  null
+          text: "bobadbfodsaf"
         }
       ]
     }
