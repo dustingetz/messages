@@ -21,7 +21,20 @@ class MessagesController {
           messagesCursor.refine(index).set(newRecord);
         }
       },
-      presence: (record) => console.log(record)
+      presence: (record) => {
+        //Object {action: "leave", timestamp: 1444788460, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 2}
+        //Object {action: "join", timestamp: 1444788466, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 3}
+
+        var op =
+            (record.action === "leave") ? _.difference :
+            (record.action === "join") ? _.union : (value, uuid) => {
+              console.log('Unknown action: ', record);
+              return value;
+            };
+
+        const newValue = op(this.cursor.refine('present').value, [record.uuid]);
+        this.cursor.refine('present').set(newValue);
+      }
     });
 
     this.loadMoreHistory();

@@ -25,18 +25,9 @@ var Message = React.createClass({
 
 var ContactListElement = React.createClass({
   render() {
-    var contact = this.props.contactCursor.value;
-
-    var updateUserFn = () => {
-      this.props.setCurrentUser(contact.id);
-    };
-
     return (
         <li className="contact">
-          <a onClick={updateUserFn}>
-            <h5>{contact.name}</h5>
-            <span>{contact.presence}</span>
-          </a>
+          <h5>{this.props.userId}</h5>
         </li>
     )
   }
@@ -44,14 +35,14 @@ var ContactListElement = React.createClass({
 
 var ContactList = React.createClass({
   render: function () {
-    var contactList = this.props.contactsCursor;
-    var list = contactList.value.map((a, i) => {
-      return <ContactListElement contactCursor={contactList.refine(i)} setCurrentUser={this.props.setCurrentUser}/>;
+    var contactList = this.props.present;
+    var list = contactList.map((uid) => {
+      return <ContactListElement userId={uid}/>;
     });
 
     return (
         <div className="contact-list">
-          <span><h1>Friends {contactList.value.length}</h1></span>
+          <span><h1>Users Online {contactList.length}</h1></span>
           <ul>{list}</ul>
         </div>
     );
@@ -134,9 +125,8 @@ var MessagesApp = React.createClass({
               currentUserId={this.props.cursor.refine('currentUserId').value}
               messages={this.props.cursor.refine('messages').value}
               composeTextCursor={this.props.cursor.refine('composeText')}/>
-          {/*<ContactList
-              contactsCursor={this.props.cursor.refine('contacts')}
-              setCurrentUser={controller.setCurrentUser.bind(controller)}/>*/}
+          <ContactList
+              present={this.props.cursor.refine('present').value}/>
           <pre className="diagnostics">
             { JSON.stringify(this.props.cursor.value, undefined, 2) }
           </pre>
