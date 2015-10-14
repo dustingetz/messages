@@ -1,48 +1,49 @@
 import moment from 'moment';
 
 class MessagesController {
-  constructor (cursor) {
+  constructor (pubnubConfig, cursor) {
     this.cursor = cursor;
+
+    this.PUBNUB_demo = PUBNUB.init(pubnubConfig);
+
+    this.PUBNUB_demo.subscribe({
+      channel: 'demo_tutorial',
+      message: (m) => console.log(m),
+      presence: (record) => console.log(record)
+    });
   }
 
-  setCurrentUser(uid) {
-    this.cursor.refine('currentUserId').set(uid);
-  }
-
-  getCurrentUserCursor() {
-    return findContactCursorByUID(this.cursor.refine('currentUserId').value, this.cursor.refine('contacts'));
+  loadMoreHistory () {
+    this.PUBNUB_demo.history({
+      channel : 'demo_tutorial',
+      count : 10,
+      callback : function(m){console.log(m)},
+      include_token: true
+    });
   }
 
   sendMessage (text, uid) {
-    var contactCursor = findContactCursorByUID(uid, this.cursor.refine('contacts'));
+    var message = buildMessage(text, uid)
+    this.cursor.refine('messages').push([message]);
+    this.cursor.refine('composeText').set('');
 
-    contactCursor.refine('messages').push([buildMessage(text, true)]);
-    contactCursor.refine('composeText').set('');
-
-    this.writeToService(text, contactCursor.refine('id').value);
+    this.writeToService(message);
   }
 
 
-  writeToService (text, uid) {
-    console.log('Sending message \'' + text + '\'' + ' to uid: '+ uid);
-    setTimeout(() => {
-      var contactCursor = findContactCursorByUID(uid, this.cursor.refine('contacts'));
-      contactCursor.refine('messages').push([buildMessage('Replying with some text.')]);
-    }, 2000);
+  writeToService (message) {
+    this.PUBNUB_demo.publish({
+      channel: 'demo_tutorial',
+      message: message
+    });
   }
 }
 
-function findContactCursorByUID(uid, contactsCursor) {
-  var userRecordIndex = _.findIndex(contactsCursor.value, {id: uid});
-  return contactsCursor.refine(userRecordIndex);
-}
-
-function buildMessage(text, myself, imageHref) {
+function buildMessage(text, uid) {
   return {
-    myself: !!myself,
-    time: moment().format(),
-    text: text,
-    imageHref: imageHref
+    messageText: text,
+    uid: uid,
+    time: moment().format()
   };
 }
 

@@ -87,12 +87,11 @@ var Compose = React.createClass({
 
 var MessageDisplay = React.createClass({
   render() {
-    var currentUserCursor = this.props.currentUserCursor;
-    var rows = currentUserCursor.refine('messages').value.map((record, i) => {
+    var rows = this.props.messages.map((record, i) => {
         return(
             <Message
-                myself={record.myself}
-                text={record.text}
+                myself={record.uid === this.props.currentUserId}
+                text={record.messageText}
                 key={i}
                 time={record.time} />
         );
@@ -100,7 +99,7 @@ var MessageDisplay = React.createClass({
 
     var spinner = <div />;
 
-    var sendMessage = _.partial(this.props.sendMessage, _, currentUserCursor.value.id);
+    var sendMessage = _.partial(this.props.sendMessage, _, this.props.currentUserId);
 
     return (
         <div className="message-display">
@@ -116,7 +115,7 @@ var MessageDisplay = React.createClass({
               >
             {rows}
           </Infinite>
-          <Compose sendMessage={sendMessage} cursor={currentUserCursor.refine('composeText')}/>
+          <Compose sendMessage={sendMessage} cursor={this.props.composeTextCursor}/>
         </div>
 
     )
@@ -132,10 +131,12 @@ var MessagesApp = React.createClass({
           <MessageDisplay
               isInfiniteLoading={this.props.cursor.refine('isInfiniteLoading').value}
               sendMessage={controller.sendMessage.bind(controller)}
-              currentUserCursor={controller.getCurrentUserCursor()} />
-          <ContactList
+              currentUserId={this.props.cursor.refine('currentUserId').value}
+              messages={this.props.cursor.refine('messages').value}
+              composeTextCursor={this.props.cursor.refine('composeText')}/>
+          {/*<ContactList
               contactsCursor={this.props.cursor.refine('contacts')}
-              setCurrentUser={controller.setCurrentUser.bind(controller)}/>
+              setCurrentUser={controller.setCurrentUser.bind(controller)}/>*/}
           <pre className="diagnostics">
             { JSON.stringify(this.props.cursor.value, undefined, 2) }
           </pre>

@@ -2,60 +2,35 @@ var DeepDiff = require('deep-diff');
 import MessagesApp from './App';
 import MessagesController from './MessagesController';
 
-var stateAtom = atom.createAtom({
-  isInfiniteLoading: false,
-  currentUserId: 2,
-  contacts: [
-    {
-      id: 1,
-      name: "Joe",
-      presence: "Online",
-      composeText: '',
-      messages: []
-    },
-    {
-      id: 2,
-      name: "Bob",
-      presence: "Online",
-      composeText: '',
-      messages: [
-        {
-          myself: false,
-          time: '5:02pm',
-          text: "bobobbobboo"
-        },
-        {
-          myself: true,
-          time: '5:02pm',
-          text: "boasdbfoadsfbosadf"
-        },
-        {
-          myself: true,
-          time: '5:02pm',
-          text: "bobadbfodsaf"
-        }
-      ]
-    }
-  ]
-});
 
-var cursor = ReactCursor.Cursor.build(stateAtom.deref(), stateAtom.swap);
+function entryPoint (pubnubConfig, uuid) {
 
-var messagesController = new MessagesController(cursor);
+  var store = atom.createAtom({
+    isInfiniteLoading: false,
+    currentUserId: uuid,
+    composeText: '',
+    present: [], // [uid]
+    messages: [] // [{uid, time, messageText}]
+  });
 
+  window.cursor = ReactCursor.Cursor.build(store.deref(), store.swap);
 
-function queueRender (key, ref, prevVal, curVal) {
-  console.log('state update: ', DeepDiff.diff(prevVal, curVal));
-  var cursor = ReactCursor.Cursor.build(stateAtom.deref(), stateAtom.swap);
-  messagesController.cursor = cursor;
+  window.messagesController = new MessagesController(pubnubConfig, cursor);
 
-  window.messages = React.render(
-      <MessagesApp
-          messagesController={messagesController}
-          cursor={cursor} />, document.getElementById('root'));
+  function queueRender (key, ref, prevVal, curVal) {
+    console.log('state update: ', DeepDiff.diff(prevVal, curVal));
+    var cursor = ReactCursor.Cursor.build(store.deref(), store.swap);
+    messagesController.cursor = cursor;
+
+    window.messages = React.render(
+        <MessagesApp
+            messagesController={messagesController}
+            cursor={cursor} />, document.getElementById('root'));
+  }
+
+  store.addWatch('react-renderer', queueRender);
+  queueRender('react-renderer', store, undefined, store.deref());
+
 }
 
-stateAtom.addWatch('react-renderer', queueRender);
-queueRender('react-renderer', stateAtom, undefined, stateAtom.deref());
-
-
+window.entryPoint = entryPoint;
