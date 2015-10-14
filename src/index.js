@@ -10,12 +10,14 @@ function entryPoint (pubnubConfig, uuid) {
     currentUserId: uuid,
     composeText: '',
     present: [], // [uid]
-    messages: [] // [{uid, time, messageText}]
+    messages: [] // [{uid, messageId, time, messageText}]
   });
 
   window.cursor = ReactCursor.Cursor.build(store.deref(), store.swap);
 
   window.messagesController = new MessagesController(pubnubConfig, cursor);
+
+  window.onbeforeunload = () => { messagesController.unsubscribe(); }
 
   function queueRender (key, ref, prevVal, curVal) {
     console.log('state update: ', DeepDiff.diff(prevVal, curVal));

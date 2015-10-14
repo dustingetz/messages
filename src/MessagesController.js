@@ -3,11 +3,12 @@ import moment from 'moment';
 class MessagesController {
   constructor (pubnubConfig, cursor) {
     this.cursor = cursor;
+    this.channel = 'demo_tutorial';
 
     this.PUBNUB_demo = PUBNUB.init(pubnubConfig);
 
     this.PUBNUB_demo.subscribe({
-      channel: 'demo_tutorial',
+      channel: this.channel,
       message: (msg, envelope) => {
         var ts = envelope[1];
         var messagesCursor = this.cursor.refine('messages');
@@ -28,7 +29,7 @@ class MessagesController {
 
   loadMoreHistory () {
     this.PUBNUB_demo.history({
-      channel : 'demo_tutorial',
+      channel : this.channel,
       count : 10,
       callback : (history) => {
 
@@ -42,9 +43,17 @@ class MessagesController {
         var messages = _.map(history[0], (historyObj) => {
           return _.extend({}, historyObj.message, {time: historyObj.timetoken});
         });
-        this.cursor.refine('messages').unshift(messages);
+        this.cursor.refine('messages').push(messages);
       },
       include_token: true
+    });
+  }
+
+  unsubscribe() {
+    var uid = this.cursor.refine('currentUserId').value;
+    this.writeToService(uid + ' unsubscribed', uid, PUBNUB.uuid());
+    this.PUBNUB_demo.unsubscribe({
+      channel: this.channel
     });
   }
 
@@ -65,7 +74,7 @@ class MessagesController {
 
   writeToService (text, uid, msgId) {
     this.PUBNUB_demo.publish({
-      channel: 'demo_tutorial',
+      channel: this.channel,
       message: {
         messageText: text,
         uid: uid,

@@ -87,12 +87,12 @@ var Compose = React.createClass({
 
 var MessageDisplay = React.createClass({
   render() {
-    var rows = this.props.messages.map((record, i) => {
+    var rows = this.props.messages.map((record) => {
         return(
             <Message
                 myself={record.uid === this.props.currentUserId}
                 text={record.messageText}
-                key={i}
+                key={record.messageId}
                 time={record.time} />
         );
     });
