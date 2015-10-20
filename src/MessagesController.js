@@ -1,4 +1,6 @@
 import moment from 'moment';
+import shortUid from './shortUid';
+
 
 class MessagesController {
   constructor (pubnubConfig, cursor) {
@@ -24,16 +26,22 @@ class MessagesController {
       presence: (record) => {
         //Object {action: "leave", timestamp: 1444788460, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 2}
         //Object {action: "join", timestamp: 1444788466, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 3}
+        //Object {action: "join", timestamp: 1445381773, data: Object, uuid: "462de233-d814-45ba-bfd3-2a77f0febae6", occupancy: 1}
+        console.log(record);
 
-        var op =
-            (record.action === "leave") ? _.difference :
-            (record.action === "join") ? _.union : (value, uuid) => {
-              console.log('Unknown action: ', record);
-              return value;
-            };
-
-        const newValue = op(this.cursor.refine('present').value, [record.uuid]);
-        this.cursor.refine('present').set(newValue);
+        if (record.action === "leave") {
+          const newValue = _.reject(this.cursor.refine('present').value, {uid: record.data.uid});
+          this.cursor.refine('present').set(newValue);
+        } else if (record.action === "join") {
+          this.cursor.refine('present').push([record.data]);
+        } else {
+          console.log('Unknown action: ', record);
+        }
+      },
+      state: {
+        uid: this.cursor.refine('currentUserId').value,
+        name: `Name-${shortUid()}`,
+        status: 'Online'
       }
     });
 
@@ -64,7 +72,7 @@ class MessagesController {
 
   unsubscribe() {
     var uid = this.cursor.refine('currentUserId').value;
-    this.writeToService(uid + ' unsubscribed', uid, PUBNUB.uuid());
+    this.writeToService(uid + ' unsubscribed', uid, `message-${shortUid()}`);
     this.PUBNUB_demo.unsubscribe({
       channel: this.channel
     });

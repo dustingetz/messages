@@ -1,10 +1,11 @@
 var DeepDiff = require('deep-diff');
 import rot13 from './rot13';
+import shortUid from './shortUid';
 import MessagesApp from './App';
 import MessagesController from './MessagesController';
 
 
-function entryPoint (pubnubConfig, uuid) {
+function entryPoint (pubnubConfig) {
 
   var pubnubConfig = {
     publish_key: rot13(pubnubConfig.publish_key_encrypted),
@@ -13,9 +14,9 @@ function entryPoint (pubnubConfig, uuid) {
 
   var store = atom.createAtom({
     isInfiniteLoading: false,
-    currentUserId: uuid,
+    currentUserId: `user-${shortUid()}`,
     composeText: '',
-    present: [], // [uid]
+    present: [], // [user state]
     messages: [] // [{uid, messageId, time, messageText}]
   });
 

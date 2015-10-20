@@ -25,19 +25,20 @@ var Message = React.createClass({
 
 var ContactListElement = React.createClass({
   render() {
+    var userObj = this.props.userObj;
     return (
         <li className="contact">
-          <h5>{this.props.userId}</h5>
+          <h5>{userObj.status} - {userObj.name}</h5>
         </li>
-    )
+    );
   }
 });
 
 var ContactList = React.createClass({
   render: function () {
     var contactList = this.props.present;
-    var list = contactList.map((uid) => {
-      return <ContactListElement userId={uid}/>;
+    var list = contactList.map((userObj) => {
+      return <ContactListElement userObj={userObj}/>;
     });
 
     return (
