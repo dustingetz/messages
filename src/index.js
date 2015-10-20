@@ -1,9 +1,15 @@
 var DeepDiff = require('deep-diff');
+import rot13 from './rot13';
 import MessagesApp from './App';
 import MessagesController from './MessagesController';
 
 
 function entryPoint (pubnubConfig, uuid) {
+
+  var pubnubConfig = {
+    publish_key: rot13(pubnubConfig.publish_key_encrypted),
+    subscribe_key: rot13(pubnubConfig.subscribe_key_encrypted),
+  };
 
   var store = atom.createAtom({
     isInfiniteLoading: false,
