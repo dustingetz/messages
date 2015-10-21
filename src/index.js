@@ -28,7 +28,7 @@ function entryPoint (pubnubConfig) {
 
   function queueRender (key, ref, prevVal, curVal) {
     console.log('state update: ', DeepDiff.diff(prevVal, curVal));
-    var cursor = ReactCursor.Cursor.build(store.deref(), store.swap);
+    window.cursor = ReactCursor.Cursor.build(store.deref(), store.swap);
     messagesController.cursor = cursor;
 
     window.messages = React.render(

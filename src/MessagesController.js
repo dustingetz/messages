@@ -15,9 +15,9 @@ class MessagesController {
         var ts = envelope[1];
         var messagesCursor = this.cursor.refine('messages');
         var index = _.findIndex(messagesCursor.value, { messageId: msg.messageId });
-        var newRecord = _.extend({}, msg, {time: ts});
+        var newRecord = _.extend({}, msg, {time: this.formatTS(ts)});
         if (index === -1) {
-          messagesCursor.push([newRecord]);
+          messagesCursor.unshift([newRecord]);
         }
         else {
           messagesCursor.refine(index).set(newRecord);
@@ -54,7 +54,7 @@ class MessagesController {
       state: true
     });
 
-    this.loadMoreHistory();
+    this.initialLoadHistory();
   }
 
   updateName() {
@@ -70,7 +70,7 @@ class MessagesController {
     });
   }
 
-  loadMoreHistory () {
+  initialLoadHistory () {
     this.PUBNUB_demo.history({
       channel : this.channel,
       count : 10,
@@ -84,32 +84,64 @@ class MessagesController {
          }
          */
         var messages = _.map(history[0], (historyObj) => {
-          return _.extend({}, historyObj.message, {time: historyObj.timetoken});
+          console.log('TIMETOKEN:' + historyObj.timetoken);
+          return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
         });
+        this.cursor.refine('messages').unshift(messages);
+      },
+      include_token: true
+    });
+  }
+
+  loadMoreHistory () {
+    this.PUBNUB_demo.history({
+      channel : this.channel,
+      count : 10,
+      callback : (history) => {
+
+        /*
+         0: Array[10]
+         0: Object {
+         message: Object
+         timetoken: 14447847479410428
+         }
+         */
+        var messages = _.map(history[0], (historyObj) => {
+          console.log('TIMETOKEN:' + historyObj.timetoken);
+          return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
+        }).reverse();
         this.cursor.refine('messages').push(messages);
       },
-      end: (this.cursor.refine('messages').value[0] || {}).time,
+      start: this.unFormatTime((_.last(this.cursor.refine('messages').value) || {}).time),
       include_token: true
     });
   }
 
   unsubscribe() {
     var uid = this.cursor.refine('currentUserId').value;
-    this.writeToService(uid + ' unsubscribed', uid, `message-${shortUid()}`);
+    //this.writeToService(uid + ' unsubscribed', uid, `message-${shortUid()}`);
     this.PUBNUB_demo.unsubscribe({
       channel: this.channel
     });
   }
 
+  formatTS(ts) {
+    return moment.unix(ts / 10000000).format();
+  }
+
+  unFormatTime(time) {
+    return moment(time).unix() * 10000000;
+  }
+
   sendMessage (text, uid) {
-    var msgId = PUBNUB.uuid();
+    var msgId = `message-${shortUid()}`;
     var message = {
     messageText: text,
         uid: uid,
         messageId: msgId,
         time: moment().format()
   };
-    this.cursor.refine('messages').push([message]);
+    this.cursor.refine('messages').unshift([message]);
     this.cursor.refine('composeText').set('');
 
     this.writeToService(text, uid, msgId);

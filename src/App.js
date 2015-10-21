@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
-import './styles.less'
+import './styles.less';
 
 var Message = React.createClass({
   propTypes: {

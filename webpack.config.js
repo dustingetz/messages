@@ -41,7 +41,8 @@ module.exports = {
       {
         test: /\.less$/,
         loader: 'style!css!less'
-      }
+      },
+      {test: require.resolve('moment'), loader: 'expose?moment'}
     ]
   }
 };
