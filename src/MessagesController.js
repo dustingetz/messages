@@ -24,16 +24,17 @@ class MessagesController {
         }
       },
       presence: (record) => {
-        //Object {action: "leave", timestamp: 1444788460, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 2}
-        //Object {action: "join", timestamp: 1444788466, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 3}
-        //Object {action: "join", timestamp: 1445381773, data: Object, uuid: "462de233-d814-45ba-bfd3-2a77f0febae6", occupancy: 1}
-        console.log(record);
-
+        //{action: "leave", timestamp: 1444788460, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 2}
+        //{action: "join", timestamp: 1444788466, uuid: "5a6892db-3166-4a5b-b4b5-1add070aeae6", occupancy: 3}
+        //{action: "join", timestamp: 1445381773, data: Object, uuid: "462de233-d814-45ba-bfd3-2a77f0febae6", occupancy: 1}
+        //{action: "state-change", timestamp: 1445385846, data: Object, uuid: "eea3cc59-df00-4a58-a8c9-fa9fb6ba535d", occupancy: 2}
         if (record.action === "leave") {
           const newValue = _.reject(this.cursor.refine('present').value, {uid: record.data.uid});
           this.cursor.refine('present').set(newValue);
         } else if (record.action === "join") {
-          this.cursor.refine('present').push([record.data]);
+          if (!!record.data) {
+            this.cursor.refine('present').push([record.data]);
+          }
         } else {
           console.log('Unknown action: ', record);
         }
@@ -45,7 +46,28 @@ class MessagesController {
       }
     });
 
+    this.PUBNUB_demo.here_now({
+      channel : this.channel,
+      callback : (m) => {
+        this.cursor.refine('present').set(m.uuids.map(x => x.state));
+      },
+      state: true
+    });
+
     this.loadMoreHistory();
+  }
+
+  updateName() {
+    this.PUBNUB_demo.state({
+      channel  : this.channel,
+      state    : {
+        uid: this.cursor.refine('currentUserId').value,
+        name: `Name-${shortUid()}`,
+        status: 'Online'
+      },
+      callback : function(m){console.log(m)},
+      error    : function(m){console.log(m)}
+    });
   }
 
   loadMoreHistory () {
@@ -66,6 +88,7 @@ class MessagesController {
         });
         this.cursor.refine('messages').push(messages);
       },
+      end: (this.cursor.refine('messages').value[0] || {}).time,
       include_token: true
     });
   }
