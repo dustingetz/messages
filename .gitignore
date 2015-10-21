@@ -2,4 +2,4 @@
 !.gitignore
 node_modules
 *.log
-dist
+static
