@@ -28,21 +28,17 @@ module.exports = {
     ],
     modulesDirectories: [
       'node_modules'
-    ]
+    ],
+    alias: {
+      'react-infinite': path.join(__dirname, 'vendor/react-infinite/src/react-infinite2'),
+    }
   },
 
   module: {
     loaders: [
-      {
-        test: /\.jsx?$/,
-        loaders: ['react-hot', 'babel'],
-        include: path.join(__dirname, 'src')
-      },
-      {
-        test: /\.less$/,
-        loader: 'style!css!less'
-      },
-      {test: require.resolve('moment'), loader: 'expose?moment'}
+      { test: /\.jsx?$/, loaders: ['babel'], include: [path.join(__dirname, 'src'), path.join(__dirname, 'vendor')] },
+      { test: /\.less$/, loader: 'style!css!less' },
+      { test: require.resolve('moment'), loader: 'expose?moment' }
     ]
   }
 };

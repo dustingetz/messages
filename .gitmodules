@@ -1,0 +1,3 @@
+[submodule "vendor/react-infinite"]
+	path = vendor/react-infinite
+	url = git@github.com:dustingetz/react-infinite.git

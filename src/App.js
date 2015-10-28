@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+import Infinite from 'react-infinite';
 import './styles.less';
 
 var Message = React.createClass({

@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node server.js",
-    "build": "webpack"
+    "build": "webpack",
+    "postinstall": "pushd vendor/react-infinite && npm install && popd"
   },
   "main": "./src/messages.js",
   "devDependencies": {
