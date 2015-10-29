@@ -1,5 +1,6 @@
 import moment from 'moment';
 import shortUid from './shortUid';
+import Promise from 'bluebird';
 
 
 class MessagesController {
@@ -94,26 +95,29 @@ class MessagesController {
   }
 
   loadMoreHistory () {
-    this.PUBNUB_demo.history({
-      channel : this.channel,
-      count : 10,
-      callback : (history) => {
-
-        /*
-         0: Array[10]
-         0: Object {
-         message: Object
-         timetoken: 14447847479410428
-         }
-         */
-        var messages = _.map(history[0], (historyObj) => {
-          console.log('TIMETOKEN:' + historyObj.timetoken);
-          return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
-        }).reverse();
-        this.cursor.refine('messages').push(messages);
-      },
-      start: this.unFormatTime((_.last(this.cursor.refine('messages').value) || {}).time),
-      include_token: true
+    return new Promise((resolve, reject) => {
+      this.PUBNUB_demo.history({
+        channel: this.channel,
+        count: 10,
+        error: (error) => reject(error),
+        callback: (history) => {
+          /*
+           0: Array[10]
+           0: Object {
+           message: Object
+           timetoken: 14447847479410428
+           }
+           */
+          var messages = _.map(history[0], (historyObj) => {
+            console.log('TIMETOKEN:' + historyObj.timetoken);
+            return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
+          }).reverse();
+          this.cursor.refine('messages').push(messages);
+          resolve();
+        },
+        start: this.unFormatTime((_.last(this.cursor.refine('messages').value) || {}).time),
+        include_token: true
+      });
     });
   }
 

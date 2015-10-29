@@ -100,10 +100,10 @@ var MessageDisplay = React.createClass({
                     className="message-list"
                     maxChildren={15}
                     containerHeight={400}
+                    flipped={true}
                     infiniteLoadBeginBottomOffset={50}
                     onInfiniteLoad={this.props.loadMoreHistory}
                     loadingSpinnerDelegate={spinner}
-                    isInfiniteLoading={this.props.isInfiniteLoading}
                     diagnosticsDomElId="diagnostics"
               >
             {rows}

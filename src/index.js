@@ -13,7 +13,6 @@ function entryPoint (pubnubConfig) {
   };
 
   var store = atom.createAtom({
-    isInfiniteLoading: false,
     currentUserId: `user-${shortUid()}`,
     composeText: '',
     present: [], // [user state]
