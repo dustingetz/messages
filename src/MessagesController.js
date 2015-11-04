@@ -74,7 +74,7 @@ class MessagesController {
   initialLoadHistory () {
     this.PUBNUB_demo.history({
       channel : this.channel,
-      count : 10,
+      count : 15,
       callback : (history) => {
 
         /*
@@ -85,7 +85,6 @@ class MessagesController {
          }
          */
         var messages = _.map(history[0], (historyObj) => {
-          console.log('TIMETOKEN:' + historyObj.timetoken);
           return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
         });
         this.cursor.refine('messages').unshift(messages);
@@ -109,7 +108,6 @@ class MessagesController {
            }
            */
           var messages = _.map(history[0], (historyObj) => {
-            console.log('TIMETOKEN:' + historyObj.timetoken);
             return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
           }).reverse();
           this.cursor.refine('messages').push(messages);

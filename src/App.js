@@ -16,9 +16,9 @@ var Message = React.createClass({
     return (
         <div className={classNames}>
           <div className="msg-content">
+            <time>{this.props.time}</time>
             <span>{this.props.text}</span>
           </div>
-          <time>{this.props.time}</time>
         </div>
     );
   }
@@ -98,10 +98,8 @@ var MessageDisplay = React.createClass({
         <div className="message-display">
           <Infinite ref="infinite"
                     className="message-list"
-                    maxChildren={15}
-                    containerHeight={400}
                     flipped={true}
-                    infiniteLoadBeginBottomOffset={50}
+                    scrollLoadThreshold={50}
                     onInfiniteLoad={this.props.loadMoreHistory}
                     loadingSpinnerDelegate={spinner}
                     diagnosticsDomElId="diagnostics"
