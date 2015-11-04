@@ -94,28 +94,36 @@ class MessagesController {
   }
 
   loadMoreHistory () {
+    var loadCount = 10;
+
     return new Promise((resolve, reject) => {
-      this.PUBNUB_demo.history({
-        channel: this.channel,
-        count: 10,
-        error: (error) => reject(error),
-        callback: (history) => {
-          /*
-           0: Array[10]
-           0: Object {
-           message: Object
-           timetoken: 14447847479410428
-           }
-           */
-          var messages = _.map(history[0], (historyObj) => {
-            return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
-          }).reverse();
-          this.cursor.refine('messages').push(messages);
-          resolve();
-        },
-        start: this.unFormatTime((_.last(this.cursor.refine('messages').value) || {}).time),
-        include_token: true
-      });
+      if (!this.cursor.refine('loadedAllHistory').value) {
+        this.PUBNUB_demo.history({
+          channel: this.channel,
+          count: loadCount,
+          error: (error) => reject(error),
+          callback: (history) => {
+            /*
+             0: Array[10]
+             0: Object {
+             message: Object
+             timetoken: 14447847479410428
+             }
+             */
+            var messages = _.map(history[0], (historyObj) => {
+              return _.extend({}, historyObj.message, {time: this.formatTS(historyObj.timetoken)});
+            }).reverse();
+            if (messages.length < loadCount) {
+              this.cursor.refine('loadedAllHistory').set(true);
+            }
+
+            this.cursor.refine('messages').push(messages);
+            resolve();
+          },
+          start: this.unFormatTime((_.last(this.cursor.refine('messages').value) || {}).time),
+          include_token: true
+        });
+      }
     });
   }
 

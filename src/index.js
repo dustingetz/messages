@@ -16,6 +16,7 @@ function entryPoint (pubnubConfig) {
     currentUserId: `user-${shortUid()}`,
     composeText: '',
     present: [], // [user state]
+    loadedAllHistory: false,
     messages: [] // [{uid, messageId, time, messageText}]
   });
 
