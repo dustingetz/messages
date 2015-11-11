@@ -124,9 +124,6 @@ var MessagesApp = React.createClass({
               loadMoreHistory={controller.loadMoreHistory.bind(controller)}/>
           <ContactList
               present={this.props.cursor.refine('present').value}/>
-          <pre className="diagnostics">
-            { JSON.stringify(this.props.cursor.value, undefined, 2) }
-          </pre>
         </div>
     );
   }

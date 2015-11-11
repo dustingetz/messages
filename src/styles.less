@@ -4,28 +4,32 @@
   box-sizing: border-box;
 }
 
+html, body{
+  height:100%;
+}
+
 body {
   overflow-y: hidden;
 }
 
 .messages-app {
-  padding: 10px;
+  @messages-app-padding: 10px;
+  padding: @messages-app-padding;
 
   .message-display {
-    @message-list-height: 400px;
     @composition-area-height: 40px;
     @border-styling: 1px solid #ddd;
 
-    height: @message-list-height + @composition-area-height;
-    width: 60%;
+    height: calc(~"100vh" - (2 * @messages-app-padding));
+    width: 100%;
     float: left;
 
     border: @border-styling;
     border-radius: 4px;
 
     .message-list {
-      //currently overridden by inline styles in react-infinite
-      height: @message-list-height;
+      height: calc(~"100vh" - ((2 * @messages-app-padding) + @composition-area-height));
+
       border-bottom: @border-styling;
       padding: 10px;
 
@@ -79,6 +83,7 @@ body {
   }
 
   .contact-list {
+    display: none;
     > ul {
       list-style: none;
     }
