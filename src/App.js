@@ -13,14 +13,12 @@ var Message = React.createClass({
   },
 
   render: function () {
-    var classNames = "message" + (this.props.myself ? " sent-message" : " received-message");
+    var classNames = "message"; // + (this.props.myself ? " sent-message" : " received-message");
 
     return (
         <div className={classNames}>
-          <div className="msg-content">
-            <time>{this.props.time}</time>
-            <span>{this.props.text}</span>
-          </div>
+          <time>{moment(this.props.time).format('HH:mm')}</time>
+          <span>{this.props.text}</span>
         </div>
     );
   }

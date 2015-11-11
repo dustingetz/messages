@@ -74,7 +74,7 @@ class MessagesController {
   initialLoadHistory () {
     this.PUBNUB_demo.history({
       channel : this.channel,
-      count : 15,
+      count : 80,
       callback : (history) => {
 
         /*
@@ -94,7 +94,7 @@ class MessagesController {
   }
 
   loadMoreHistory () {
-    var loadCount = 10;
+    var loadCount = 25;
 
     return new Promise((resolve, reject) => {
       if (!this.cursor.refine('loadedAllHistory').value) {
