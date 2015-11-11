@@ -5,8 +5,6 @@ var webpack = require('webpack');
 module.exports = {
   devtool: 'inline-source-map',
   entry: [
-    //'webpack-dev-server/client?http://localhost:3000',
-    //'webpack/hot/only-dev-server',
     './src/index'
   ],
 
@@ -17,12 +15,12 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.optimize.DedupePlugin()
   ],
 
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['', '.js'],
     root: [
       path.resolve('./src')
     ],
@@ -30,13 +28,13 @@ module.exports = {
       'node_modules'
     ],
     alias: {
-      'react-infinite': path.join(__dirname, 'vendor/react-infinite/src/react-infinite2'),
+      'react-chatview': path.join(__dirname, 'vendor/react-infinite/src/react-chatview'),
     }
   },
 
   module: {
     loaders: [
-      { test: /\.jsx?$/, loaders: ['babel'], include: [path.join(__dirname, 'src'), path.join(__dirname, 'vendor')] },
+      { test: /\.js$/, loaders: ['babel'], include: [path.join(__dirname, 'src'), path.join(__dirname, 'vendor')] },
       { test: /\.less$/, loader: 'style!css!less' },
       { test: require.resolve('moment'), loader: 'expose?moment' }
     ]

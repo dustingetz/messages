@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import moment from 'moment';
-import Infinite from 'react-infinite';
+import ChatView from 'react-chatview';
+import React from 'react';
 import './styles.less';
+
 
 var Message = React.createClass({
   propTypes: {
@@ -38,8 +40,8 @@ var ContactListElement = React.createClass({
 var ContactList = React.createClass({
   render: function () {
     var contactList = this.props.present;
-    var list = contactList.map((userObj) => {
-      return <ContactListElement userObj={userObj}/>;
+    var list = contactList.map((userObj, i) => {
+      return <ContactListElement userObj={userObj} key={userObj.uid}/>;
     });
 
     return (
@@ -90,22 +92,16 @@ var MessageDisplay = React.createClass({
         );
     });
 
-    var spinner = <div />;
-
     var sendMessage = _.partial(this.props.sendMessage, _, this.props.currentUserId);
 
     return (
         <div className="message-display">
-          <Infinite ref="infinite"
-                    className="message-list"
+          <ChatView className="message-list"
                     flipped={true}
                     scrollLoadThreshold={50}
-                    onInfiniteLoad={this.props.loadMoreHistory}
-                    loadingSpinnerDelegate={spinner}
-                    diagnosticsDomElId="diagnostics"
-              >
+                    onInfiniteLoad={this.props.loadMoreHistory}>
             {rows}
-          </Infinite>
+          </ChatView>
           <Compose sendMessage={sendMessage} cursor={this.props.composeTextCursor}/>
         </div>
 
@@ -136,4 +132,4 @@ var MessagesApp = React.createClass({
   }
 });
 
-module.exports = MessagesApp;
+export default MessagesApp;
