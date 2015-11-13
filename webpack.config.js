@@ -28,7 +28,7 @@ module.exports = {
       'node_modules'
     ],
     alias: {
-      'react-chatview': path.join(__dirname, 'vendor/react-infinite/src/react-chatview'),
+      'react-chatview': path.join(__dirname, 'vendor/react-chatview/src/react-chatview'),
     }
   },
 
