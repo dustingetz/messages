@@ -36,7 +36,8 @@ module.exports = {
     loaders: [
       { test: /\.js$/, loaders: ['babel'], include: [path.join(__dirname, 'src'), path.join(__dirname, 'vendor')] },
       { test: /\.less$/, loader: 'style!css!less' },
-      { test: require.resolve('moment'), loader: 'expose?moment' }
+      { test: require.resolve('moment'), loader: 'expose?moment' },
+      { test: /node_modules\/react-cursor/, loader: 'babel' }
     ]
   }
 };
