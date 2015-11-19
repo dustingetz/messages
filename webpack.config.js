@@ -1,9 +1,11 @@
 var path = require('path');
+var _ = require('lodash');
 var webpack = require('webpack');
 
 
+const devBuild = process.env.NODE_ENV !== 'production';
+
 module.exports = {
-  devtool: 'inline-source-map',
   entry: [
     './src/index'
   ],
@@ -14,10 +16,10 @@ module.exports = {
     publicPath: '/static/'
   },
 
-  plugins: [
+  plugins: _.compact([
     new webpack.NoErrorsPlugin(),
-    new webpack.optimize.DedupePlugin()
-  ],
+    devBuild ? null : new webpack.optimize.UglifyJsPlugin()
+  ]),
 
   resolve: {
     extensions: ['', '.js'],
@@ -39,5 +41,7 @@ module.exports = {
       { test: require.resolve('moment'), loader: 'expose?moment' },
       { test: /node_modules\/react-cursor/, loader: 'babel' }
     ]
-  }
+  },
+
+  devtool: devBuild ? 'eval-cheap-module-source-map' : undefined
 };
